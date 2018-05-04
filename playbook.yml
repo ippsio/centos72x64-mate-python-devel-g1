@@ -1,0 +1,17 @@
+---
+- hosts: all
+  user: vagrant
+  gather_facts: False
+
+  vars:
+    python_ver: 3.6.5
+
+  tasks:
+#    - include: tasks/yum_update.yml
+#    - include: tasks/python.yml
+#    - include: tasks/nginx.yml
+#    - include: tasks/mysql.yml
+#    - include: tasks/django.yml
+    - include: tasks/gui.yml
+
+

@@ -1,0 +1,38 @@
+---
+- name: Pre-remove mariadb
+  yum:
+    name=mariadb-libs state=absent
+  when_error: false
+
+- name: Remove /var/lib/mysql/
+  file:
+    state: absent
+    path: /var/lib/mysql/
+
+- name: Install mysql related modules.
+  yum:
+    name: {{ item }}
+    state: latest
+  with_items:
+    - http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
+    - yum-utils
+
+- name: Disable mysql57-community
+  command: yum-config-manager --disable mysql57-community
+
+- name: Enable mysql56-community
+  command: yum-config-manager --enable mysql56-community
+
+- name: Install mysql-devel
+  yum:
+    name: mysql-devel
+    state: latest
+
+- name: Install mysql-community-server
+  yum:
+    name: mysql-community-server
+    state: latest
+
+- name: Add and enable MySQL service
+    service: name=mysqld enabled=yes state=restarted
+

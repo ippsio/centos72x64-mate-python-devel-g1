@@ -1,0 +1,28 @@
+---
+- name: Install GUI
+  become: yes
+  yum: name="epel-release.noarch" state=latest
+
+- name: Update /etc/yum.conf
+  become: yes
+  shell: sh -c 'echo group_package_types=default,mandatory >> /etc/yum.conf'
+
+- name: Install X Window system
+  become: yes
+  yum: name="@X Window system" enablerepo=epel state=latest
+
+- name: Install X MATE-Desktop
+  become: yes
+  yum: name="@MATE-Desktop" enablerepo=epel state=latest
+
+- name: Append .xinitrc
+  blockinfile:
+    dest: /$HOME/.xinitrc
+    create: yes
+    block: |
+      exec mate-session
+
+- name: Set default
+  become: yes
+  shell: systemctl set-default graphical.target
+ 

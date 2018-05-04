@@ -1,0 +1,62 @@
+---
+- name: Make django project root directory
+  become: yes
+  file:
+    path=/var/www/django
+    state=directory
+    owner=vagrant
+    group=vagrant
+    mode=0755
+
+- name: Install Django related modules.
+  pip: name={{ item }}
+  with_items:
+  - Django
+  - djangorestframework
+  - django-filter
+  - mysqlclient
+  - PyMySQL
+  - pytz
+  ignore_errors: yes
+
+- name: Create new app.conf to /tmp
+  become: yes
+  blockinfile:
+    dest: /tmp/app.conf
+    create: yes
+    block: |
+      server {
+          server_name localhost;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP  $remote_addr;
+          proxy_set_header X-Forwarded-Host $host;
+          proxy_set_header X-Forwarded-Server $host;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      
+          if ( $request_uri ~ "/app" ) {
+              set $not_ignore false;
+          }
+          if ($not_ignore != false ) {
+              rewrite ^([^.]+[^/])$ $1/ permanent;
+          }
+      
+          location /app/ {
+              proxy_pass http://localhost:8000/app/;
+          }
+      
+          location / {
+              proxy_pass http://localhost:8000/;
+          }
+      }
+
+- name: Copy app.conf to /etc.nginx/conf.d/
+  become: yes
+  copy:
+    src: /tmp/app.conf
+    dest: /etc/nginx/conf.d/
+    backup: yes
+
+- name: Enable nginx service
+  become: yes
+  service: name=nginx enabled=yes state=restarted
+
