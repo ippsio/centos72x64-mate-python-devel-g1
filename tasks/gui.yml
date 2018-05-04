@@ -9,11 +9,15 @@
 
 - name: Install X Window system
   become: yes
-  yum: name="@X Window system" enablerepo=epel state=latest
+  yum: name="@X Window system" enablerepo=epel state=present
+
+- name: Install GNOME Desktop
+  become: yes
+  yum: name="@GNOME Desktop" state=present
 
 - name: Install X MATE-Desktop
   become: yes
-  yum: name="@MATE-Desktop" enablerepo=epel state=latest
+  yum: name="@MATE-Desktop" enablerepo=epel state=present
 
 - name: Append .xinitrc
   blockinfile:
@@ -25,4 +29,59 @@
 - name: Set default
   become: yes
   shell: systemctl set-default graphical.target
- 
+
+#- name: Install qt5-qtbase.x86_64 for prepare install for fcitx
+#  become: yes
+#  yum: name=qt5-qtbase.x86_64 enablerepo="epel" state=present
+
+- name: Install fcitx(instead of iBus for Pycharm warning.)
+  become: yes
+  yum: name={{ item }} enablerepo="epel" state=present
+  with_items:
+  - fcitx-data.noarch
+  - fcitx-devel.x86_64
+  - fcitx-gtk2.x86_64
+  - fcitx-gtk3.x86_64
+  - fcitx-libs.x86_64
+  - fcitx-pinyin.x86_64
+#  - fcitx-qt4.x86_64
+#  - fcitx-qt5-devel.x86_64
+#  - fcitx-qt5.x86_64
+  - fcitx-qw.x86_64
+  - fcitx-table.x86_64
+  - fcitx-anthy.x86_64
+  - fcitx.x86_64
+  - fcitx-configtool.x86_64
+
+#- name: Install fcitx config tool(instead of iBus for Pycharm warning.)
+#  become: yes
+#  yum: name={{ item }} state=present
+#  with_items: 
+#  - ftp://ftp.pbone.net/mirror/archive.fedoraproject.org/fedora/linux/updates/19/x86_64/fcitx-configtool-0.4.7-1.fc19.x86_64.rpm 
+
+- name: Kill iBus processes.
+  become: yes
+  shell: killall ibus-daemon
+  ignore_errors: yes
+
+- name: Remove iBus
+  become: yes
+  yum: name=ibus state=absent
+
+- name: Gsetting set
+  shell: gsettings set org.gnome.settings-daemon.plugins.keyboard active false
+  ignore_errors: yes
+
+- name: imsettings-switch fcitx
+  shell: imsettings-switch fcitx
+  ignore_errors: yes
+
+- name: blockinfile
+  blockinfile:
+    dest: /$HOME/.bash_profile
+    create: yes
+    block: |
+      export GTK_IM_MODULE=fcitx
+      export QT_IM_MODULE=fcitx
+      export XMODIFIERS="@im=fcitx"
+
