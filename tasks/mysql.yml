@@ -12,7 +12,7 @@
 - name: Install mysql related modules.
   yum:
     name: {{ item }}
-    state: latest
+    state: present
   with_items:
     - http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
     - yum-utils
@@ -26,12 +26,12 @@
 - name: Install mysql-devel
   yum:
     name: mysql-devel
-    state: latest
+    state: present
 
 - name: Install mysql-community-server
   yum:
     name: mysql-community-server
-    state: latest
+    state: present
 
 - name: Add and enable MySQL service
     service: name=mysqld enabled=yes state=restarted
