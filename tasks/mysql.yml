@@ -1,38 +1,58 @@
 ---
-- name: Pre-remove mariadb
-  yum:
-    name=mariadb-libs state=absent
-  when_error: false
+#- name: Pre-remove mariadb
+#  become: yes
+#  yum:
+#    name=mariadb-libs state=absent
+#  when_error: false
+#
+#- name: Remove /var/lib/mysql/
+#  become: yes
+#  file:
+#    state: absent
+#    path: /var/lib/mysql/
+#
+#- name: Install mysql related modules.
+#  become: yes
+#  yum: name={{ item }} state=present
+#  with_items:
+#    - http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
+#    - yum-utils
+#
+#- name: Disable mysql57-community
+#  become: yes
+#  command: yum-config-manager --disable mysql57-community
+#
+#- name: Enable mysql56-community
+#  become: yes
+#  command: yum-config-manager --enable mysql56-community
+#
+#- name: Install mysql-devel
+#  become: yes
+#  yum:
+#    name: mysql-devel
+#    state: present
+#
+#- name: Install mysql-community-server
+#  become: yes
+#  yum:
+#    name: mysql-community-server
+#    state: present
 
-- name: Remove /var/lib/mysql/
-  file:
-    state: absent
-    path: /var/lib/mysql/
+- name: Comment out old default charset(utf-8)
+  become: yes
+  replace: 
+    dest: /etc/my.cnf
+    regexp:  "^character-set-server" 
+    replace: "#character-set-server" 
 
-- name: Install mysql related modules.
-  yum:
-    name: {{ item }}
-    state: present
-  with_items:
-    - http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
-    - yum-utils
-
-- name: Disable mysql57-community
-  command: yum-config-manager --disable mysql57-community
-
-- name: Enable mysql56-community
-  command: yum-config-manager --enable mysql56-community
-
-- name: Install mysql-devel
-  yum:
-    name: mysql-devel
-    state: present
-
-- name: Install mysql-community-server
-  yum:
-    name: mysql-community-server
-    state: present
+- name: Set default charset(utf-8)
+  become: yes
+  replace: 
+    dest: /etc/my.cnf
+    regexp: "^\\[mysqld\\]$" 
+    replace: "[mysqld]\ncharacter-set-server=utf8"
 
 - name: Add and enable MySQL service
-    service: name=mysqld enabled=yes state=restarted
+  become: yes
+  service: name=mysqld enabled=yes state=restarted
 

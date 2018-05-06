@@ -11,11 +11,13 @@
   become: yes
   yum: name="@X Window system" enablerepo=epel state=present
 
-- name: Install GNOME Desktop
-  become: yes
-  yum: name="@GNOME Desktop" state=present
+#- name: Install GNOME Desktop
+#  become: yes
+#  yum:
+#    name: "@^gnome-desktop-environment" 
+#    state: present
 
-- name: Install X MATE-Desktop
+- name: Install MATE-Desktop
   become: yes
   yum: name="@MATE-Desktop" enablerepo=epel state=present
 

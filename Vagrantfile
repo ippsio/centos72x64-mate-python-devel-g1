@@ -14,13 +14,13 @@ Vagrant.configure("2") do |config|
   # boxes at https://vagrantcloud.com/search.
 
   # vagrant-cachier plugin
-  if Vagrant.has_plugin?("vagrant-cachier")
-    config.cache.scope = :box
-  end
+  #if Vagrant.has_plugin?("vagrant-cachier")
+  #  config.cache.scope = :box
+  #end
 
   config.vm.box = "centos7.2x64"
   config.vm.provider "virtualbox" do |vbox|
-    vbox.name = "python-devel-g1-vm2"
+    vbox.name = "python-devel-g1-vm3"
     vbox.customize ["modifyvm", :id, "--memory", "2048"]
     vbox.customize ["modifyvm", :id, "--nictype1" ,"virtio"]
     vbox.customize ["modifyvm", :id, "--nictype2" ,"virtio"]
@@ -77,10 +77,6 @@ Vagrant.configure("2") do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  #config.vm.provision "shell", privileged: false, path: "provision-linux.sh"
-  #config.vm.provision "shell", privileged: false, path: "provision-python.sh"
-  #config.vm.provision "shell", privileged: false, path: "provision-mysql.sh"
-  #config.vm.provision "shell", privileged: false, path: "provision-django-nginx.sh"
   config.vm.provision "ansible_local" do |a|
     a.playbook = "playbook.yml"
     a.verbose = true

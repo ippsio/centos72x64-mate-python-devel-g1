@@ -1,4 +1,13 @@
 ---
+- name: fact
+  set_fact:
+    python_ver: '3.6.5'
+    http_path: 'app'
+    mysql_db: 'app'
+    mysql_user: 'app-user'
+    mysql_pass: 'app-pass'
+    mysql_host: 'localhost'
+
 - name: Make django project root directory
   become: yes
   file:
@@ -8,21 +17,36 @@
     group=vagrant
     mode=0755
 
+- name: Set interpreter
+  set_fact:
+    ansible_python_interpreter=/home/vagrant/.pyenv/versions/{{ python_ver }}/bin/python
+
+- name: Create requirements.txt
+  blockinfile:
+    dest: /var/www/django/project/requirements_django.txt
+    create: yes
+    block: |
+      Django
+      djangorestframework
+      django-filter
+      mysqlclient
+      PyMySQL
+      pytz
+
+- name: wHICH?
+  shell: bash -lc "which pip"
+
 - name: Install Django related modules.
-  pip: name={{ item }}
-  with_items:
-  - Django
-  - djangorestframework
-  - django-filter
-  - mysqlclient
-  - PyMySQL
-  - pytz
-  ignore_errors: yes
+  shell: bash -lc "pip install -r /var/www/django/project/requirements_django.txt"
+
+#- name: Set interpreter
+#  set_fact:
+#    ansible_python_interpreter=/usr/bin/python
 
 - name: Create new app.conf to /tmp
   become: yes
   blockinfile:
-    dest: /tmp/app.conf
+    dest: /tmp/{{ http_path }}.conf
     create: yes
     block: |
       server {
@@ -33,15 +57,15 @@
           proxy_set_header X-Forwarded-Server $host;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
       
-          if ( $request_uri ~ "/app" ) {
+          if ( $request_uri ~ "/{{ http_path }}" ) {
               set $not_ignore false;
           }
           if ($not_ignore != false ) {
               rewrite ^([^.]+[^/])$ $1/ permanent;
           }
       
-          location /app/ {
-              proxy_pass http://localhost:8000/app/;
+          location /{{ http_path }}/ {
+              proxy_pass http://localhost:8000/{{ http_path }}/;
           }
       
           location / {
@@ -49,14 +73,33 @@
           }
       }
 
-- name: Copy app.conf to /etc.nginx/conf.d/
+- name: Copy conf to /etc.nginx/conf.d/
   become: yes
   copy:
-    src: /tmp/app.conf
+    src: /tmp/{{ http_path }}.conf
     dest: /etc/nginx/conf.d/
     backup: yes
 
 - name: Enable nginx service
   become: yes
   service: name=nginx enabled=yes state=restarted
+
+- name: create mysql database
+  mysql_db:
+    login_user=root
+    name={{ mysql_db }} 
+    state=present
+
+- name: create mysql user
+  mysql_user: 
+    login_user=root
+    name={{ mysql_user }}
+    host={{ item }}
+    password={{ mysql_pass }}
+    priv={{ mysql_db }}.*:ALL,GRANT 
+    state=present
+  with_items:
+    - localhost
+    - 127.0.0.1
+    - "{{ mysql_host }}"
 

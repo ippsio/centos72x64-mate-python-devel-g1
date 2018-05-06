@@ -1,47 +1,84 @@
 ---
 
 - name: Install the 'Development tools' package group
+  become: yes
   yum: name="@Development tools" state=present
+
+- name: Install dependencies
+  become: yes
+  yum: name={{ item }} state=present
+  with_items:
+    - readline-devel
+    - zlib-devel
+    - bzip2-devel
+    - sqlite-devel
+    - openssl-devel
+    - libXext.x86_64
+    - libSM.x86_64
+    - libXrender.x86_64
+    - libffi-devel
+    - python-devel
+    - tk.x86_64
+    - tk-devel.x86_64
+    - tkinter.x86_64
 
 - name: Download pyenv
   git:
-    repo=git://github.com/pyenv/pyenv.git
-    dest=/home/vagrant/.pyenv
+    repo=https://github.com/pyenv/pyenv.git
+    dest=~/.pyenv
     accept_hostkey=yes
 
 - name: Edit bash_profile
   blockinfile:
-    dest: /home/vagrant/.bash_profile
+    dest: ~/.bash_profile
     block: |
       export PYENV_ROOT="$HOME/.pyenv"
+      export PYENV_ROOT="$HOME/.pyenv"
       export PATH="$PYENV_ROOT/bin:$PATH"
-      eval "$(pyenv init -)"
+      if command -v pyenv 1>/dev/null 2>&1; then
+        eval "$(pyenv init -)"
+      fi
 
-- name: Set interpreter
-  set_fact: 
-    ansible_python_interpreter=/home/vagrant/.pyenv/shims/python
+- name: Reload bash_profile
+  shell: source ~/.bash_profile
 
 - name: Exec pyenv versions
   shell: bash -lc "pyenv versions | grep {{ python_ver }}"
-  register: result_v1
   ignore_errors: yes
   changed_when: False
 
+- name: pyenv versions
+  shell: bash -lc "pyenv versions"
+  ignore_errors: yes
+
 - name: Install python interpreter.
   shell: bash -lc "pyenv install {{ python_ver }}"
-  when: result_v1 is failed
+  #shell: "pyenv install {{ python_ver }}"
+  ignore_errors: yes
 
 - name: Set global python version.
   shell: bash -lc "pyenv global {{ python_ver }}"
-  when: result_v1 is failed
+  ignore_errors: yes
+
+- name: Set shell python version.
+  shell: bash -lc "pyenv shell {{ python_ver }}"
+  ignore_errors: yes
+
+- name: Set interpreter
+  set_fact: 
+    ansible_python_interpreter=/home/vagrant/.pyenv/versions/{{ python_ver }}/bin/python
 
 - name: Upgrade pip
-  shell: pip install --upgrade pip
+  shell: "~/.pyenv/versions/3.6.5/bin/pip install --upgrade pip"
   register: result
   #changed_when: '”already up-to-date” not in result.stdout'
 
 - name: Upgrade setuptools
-  shell: pip install --upgrade setuptools
+  shell: "~/.pyenv/versions/3.6.5/bin/pip install --upgrade setuptools"
   register: result
   #changed_when: '”already up-to-date” not in result.stdout'
+
+- name: Set interpreter (Default 2.7.x)
+  set_fact: 
+    ansible_python_interpreter=/usr/bin/python
 

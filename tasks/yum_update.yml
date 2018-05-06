@@ -6,28 +6,33 @@
     dest=/tmp/RPM-GPG-KEY-puppet
 
 - name: Add gpg key for centos7 yum update operation.
+  become: yes
   rpm_key:
     state: present
     key: https://yum.puppetlabs.com/RPM-GPG-KEY-puppet
     validate_certs: yes
 
 - name: Ensure the yum package index is up to Date
+  become: yes
   yum:
     update_cache: yes
     name: '*'
     state: latest
 
-#- name: yum update
-#  yum:
-#    name: '*'
-#    state: latest
+- name: yum update
+  become: yes
+  yum:
+    name: '*'
+    state: latest
 
 - name: Add epel-release repository.
+  become: yes
   yum:
     name: epel-release
     state: present
 
 - name: Preparing for installing Guest Additions.
+  become: yes
   yum:
     name={{ item }} state=present
   with_items:
@@ -40,6 +45,7 @@
 
 
 - name: Install utility softwares.
+  become: yes
   yum:
     name={{ item }} state=present
   with_items:

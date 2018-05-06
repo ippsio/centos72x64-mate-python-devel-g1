@@ -1,7 +1,7 @@
 ---
 - name: Install nginx
   become: yes
-  yum: name="nginx" state=present
+  yum: name=nginx state=present
 
 - name: Make nginx log directory
   become: yes
