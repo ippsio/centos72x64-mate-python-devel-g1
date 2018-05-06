@@ -1,4 +1,8 @@
 ---
+- name: Set interpreter (Default 2.7.x)
+  set_fact:
+    ansible_python_interpreter=/usr/bin/python
+
 - name: Install GUI
   become: yes
   yum: name="epel-release.noarch" state=latest

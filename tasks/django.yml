@@ -37,7 +37,7 @@
   shell: bash -lc "which pip"
 
 - name: Install Django related modules.
-  shell: bash -lc "pip install -r /var/www/django/project/requirements_django.txt"
+  shell: bash -lc "pip install --default-timeout=32768 -r /var/www/django/project/requirements_django.txt"
 
 #- name: Set interpreter
 #  set_fact:
