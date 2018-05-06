@@ -1,42 +1,42 @@
 ---
-#- name: Pre-remove mariadb
-#  become: yes
-#  yum:
-#    name=mariadb-libs state=absent
-#  when_error: false
-#
-#- name: Remove /var/lib/mysql/
-#  become: yes
-#  file:
-#    state: absent
-#    path: /var/lib/mysql/
-#
-#- name: Install mysql related modules.
-#  become: yes
-#  yum: name={{ item }} state=present
-#  with_items:
-#    - http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
-#    - yum-utils
-#
-#- name: Disable mysql57-community
-#  become: yes
-#  command: yum-config-manager --disable mysql57-community
-#
-#- name: Enable mysql56-community
-#  become: yes
-#  command: yum-config-manager --enable mysql56-community
-#
-#- name: Install mysql-devel
-#  become: yes
-#  yum:
-#    name: mysql-devel
-#    state: present
-#
-#- name: Install mysql-community-server
-#  become: yes
-#  yum:
-#    name: mysql-community-server
-#    state: present
+- name: Pre-remove mariadb
+  become: yes
+  yum:
+    name=mariadb-libs state=absent
+  when_error: false
+
+- name: Remove /var/lib/mysql/
+  become: yes
+  file:
+    state: absent
+    path: /var/lib/mysql/
+
+- name: Install mysql related modules.
+  become: yes
+  yum: name={{ item }} state=present
+  with_items:
+    - http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
+    - yum-utils
+
+- name: Disable mysql57-community
+  become: yes
+  command: yum-config-manager --disable mysql57-community
+
+- name: Enable mysql56-community
+  become: yes
+  command: yum-config-manager --enable mysql56-community
+
+- name: Install mysql-devel
+  become: yes
+  yum:
+    name: mysql-devel
+    state: present
+
+- name: Install mysql-community-server
+  become: yes
+  yum:
+    name: mysql-community-server
+    state: present
 
 - name: Comment out old default charset(utf-8)
   become: yes
