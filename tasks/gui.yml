@@ -25,6 +25,10 @@
   become: yes
   yum: name="@MATE-Desktop" enablerepo=epel state=present
 
+- name: Japanese font
+  become: yes
+  yum: name="vlgothic-*" state=present
+
 - name: Append .xinitrc
   blockinfile:
     dest: /$HOME/.xinitrc
@@ -90,4 +94,8 @@
       export GTK_IM_MODULE=fcitx
       export QT_IM_MODULE=fcitx
       export XMODIFIERS="@im=fcitx"
+      export LANG=ja_JP.UTF-8
+
+- name: Japanize
+  shell: localectl set-locale LANG=ja_JP.UTF-8
 
