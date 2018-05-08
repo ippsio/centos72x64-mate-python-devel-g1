@@ -8,9 +8,9 @@
 
   tasks:
     - include: tasks/yum_update.yml
-    - include: tasks/python.yml
-    - include: tasks/nginx.yml
-    - include: tasks/mysql.yml
-    - include: tasks/django.yml
-    - include: tasks/gui.yml
+#    - include: tasks/python.yml
+#    - include: tasks/nginx.yml
+#    - include: tasks/mysql.yml
+#    - include: tasks/django.yml
+#    - include: tasks/gui.yml
 

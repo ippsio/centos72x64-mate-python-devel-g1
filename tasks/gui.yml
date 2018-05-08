@@ -97,5 +97,6 @@
       export LANG=ja_JP.UTF-8
 
 - name: Japanize
+  become: yes
   shell: localectl set-locale LANG=ja_JP.UTF-8
 
