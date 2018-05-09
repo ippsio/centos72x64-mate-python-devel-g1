@@ -31,7 +31,8 @@
 
 - name: Append .xinitrc
   blockinfile:
-    dest: /$HOME/.xinitrc
+    #dest: /$HOME/.xinitrc
+    dest: "{{ userhome }}/.xinitrc"
     create: yes
     block: |
       exec mate-session
@@ -88,7 +89,8 @@
 
 - name: blockinfile
   blockinfile:
-    dest: /$HOME/.bash_profile
+    #dest: /$HOME/.bash_profile
+    dest: "{{ userhome }}/.bash_profile"
     create: yes
     block: |
       export GTK_IM_MODULE=fcitx
