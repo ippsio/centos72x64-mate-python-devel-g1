@@ -81,6 +81,9 @@ Vagrant.configure("2") do |config|
     a.playbook = "playbook.yml"
     a.verbose = true
     a.install = true
+    #a.limit = "@/vagrant/ansible/playbook.retry"
+    a.limit = "@/vagrant/playbook.retry"
+
   end
 
 end

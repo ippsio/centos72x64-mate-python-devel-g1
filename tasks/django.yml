@@ -46,7 +46,7 @@
 #  set_fact:
 #    ansible_python_interpreter=/usr/bin/python
 
-- name: Create new app.conf to /tmp
+- name: Create new app.conf
   become: yes
   blockinfile:
     dest: /tmp/{{ http_path }}.conf
@@ -68,11 +68,15 @@
           }
       
           location /{{ http_path }}/ {
-              proxy_pass http://localhost:{{ django_app_name }}/{{ http_path }}/;
+              proxy_pass http://localhost:{{ django_app_port }}/{{ http_path }}/;
           }
       
-          location / {
-              proxy_pass http://localhost:8000/;
+          location /admin/ {
+              proxy_pass http://localhost:{{ django_app_port }}/admin/;
+          }
+
+          location /static/ {
+              proxy_pass http://localhost:{{ django_app_port }}/static/;
           }
       }
 
