@@ -31,6 +31,7 @@
 - name: Edit bash_profile
   blockinfile:
     dest: "{{ userhome }}/.bash_profile"
+    create: yes
     block: |
       export PYENV_ROOT="{{ userhome }}/.pyenv"
       export PATH="$PYENV_ROOT/bin:$PATH"
