@@ -90,3 +90,21 @@
 - name: set terminal color profile.
   shell: "dbus-launch dconf load /org/mate/terminal/ < /tmp/mate-terminal-dconf.txt"
 
+- name: Put Pycharm web site on Desktop
+  blockinfile:
+    create: yes
+    path: "{{ userhome }}/Desktop/GetPycharm.desktop"
+    block: |
+      [Desktop Entry]
+      Encoding=UTF-8
+      Name=GetPyCharm
+      Type=Link
+      URL=https://www.jetbrains.com/pycharm/
+      Icon=/usr/share/icons/hicolor/16x16/apps/firefox.png
+
+
+- name: Change folder names in English expression.
+  shell: 'echo "LANG=C xdg-user-dirs-gtk-update" > ~/デスクトップ/Change-folder-names-English.sh'
+  ignore_errors: yes
+
+

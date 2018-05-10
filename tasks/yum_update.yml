@@ -17,13 +17,13 @@
   yum:
     update_cache: yes
     name: '*'
-    state: latest
+    state: present
 
 - name: yum update
   become: yes
   yum:
     name: '*'
-    state: latest
+    state: present
 
 - name: Add epel-release repository.
   become: yes
