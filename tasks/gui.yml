@@ -103,8 +103,8 @@
       Icon=/usr/share/icons/hicolor/16x16/apps/firefox.png
 
 
-- name: Change folder names in English expression.
-  shell: 'echo "LANG=C xdg-user-dirs-gtk-update" > ~/デスクトップ/Change-folder-names-English.sh'
-  ignore_errors: yes
+#- name: Change folder names in English expression.
+#  shell: 'echo "LANG=C xdg-user-dirs-gtk-update" > ~/デスクトップ/Change-folder-names-English.sh'
+#  ignore_errors: yes
 
 
