@@ -31,6 +31,7 @@
 - name: Edit bash_profile
   blockinfile:
     dest: "{{ userhome }}/.bash_profile"
+    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK FOR PYENV -->"
     create: yes
     block: |
       export PYENV_ROOT="{{ userhome }}/.pyenv"

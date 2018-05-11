@@ -31,6 +31,7 @@
   blockinfile:
     dest: "{{ django_prj_root_path }}/{{ django_prj_name }}/requirements_django.txt"
     create: yes
+    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK FOR DJANGO REQUIREMENTS-->"
     block: |
       Django
       djangorestframework
@@ -50,6 +51,7 @@
   become: yes
   blockinfile:
     dest: /tmp/{{ http_path }}.conf
+    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK FOR APP.CONF -->"
     create: yes
     block: |
       server {
