@@ -27,7 +27,7 @@
   blockinfile:
     #dest: /$HOME/.xinitrc
     dest: "{{ userhome }}/.xinitrc"
-    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK FOR MATE-SESSION -->"
+    marker: "#<!-- {mark} ANSIBLE MANAGED BLOCK FOR MATE-SESSION -->"
     create: yes
     block: |
       exec mate-session
@@ -56,7 +56,7 @@
   blockinfile:
     dest: "{{ userhome }}/.bash_profile"
     create: yes
-    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK FOR FCITX SETTINGS -->"
+    marker: "#<!-- {mark} ANSIBLE MANAGED BLOCK FOR FCITX SETTINGS -->"
     block: |
       export GTK_IM_MODULE=fcitx
       export QT_IM_MODULE=fcitx
@@ -72,7 +72,7 @@
   blockinfile:
     dest: "/tmp/mate-terminal-dconf.txt"
     create: yes
-    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK FOR MATE-TERMINAL SETTINGS -->"
+    marker: "#<!-- {mark} ANSIBLE MANAGED BLOCK FOR MATE-TERMINAL SETTINGS -->"
     block: |
       [profiles/default]
       foreground-color='#E6E6E6E6E6E6'
