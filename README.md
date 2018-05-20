@@ -14,6 +14,7 @@ vagrant plugin install vagrant-cachier
 
 Make new VM, then provisioning task will start automatically.
 ```
+vagrant box add centos7.2x64 https://github.com/CommanderK5/packer-centos-template/releases/download/0.7.2/vagrant-centos-7.2.box
 vagrant up
 ```
 
