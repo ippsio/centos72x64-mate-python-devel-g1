@@ -1,0 +1,28 @@
+---
+- name: Add yum rerpo for chrome
+  become: yes
+  blockinfile:
+    dest: "/etc/yum.repos.d/google.chrome.repo"
+    marker: "#<!-- {mark} ANSIBLE MANAGED BLOCK FOR yum-repo-chrome -->"
+    create: yes
+    block: |
+      [google-chrome]
+      name=google-chrome
+      baseurl=http://dl.google.com/linux/chrome/rpm/stable/$basearch
+      enabled=1
+      gpgcheck=1
+      gpgkey=https://dl-ssl.google.com/linux/linux_signing_key.pub
+
+- name: yum update
+  become: yes
+  yum:
+    name: '*'
+    state: present
+
+- name: Install chrome
+  become: yes
+  yum:
+    name: 'google-chrome-stable'
+    state: present
+
+

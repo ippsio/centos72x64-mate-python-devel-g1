@@ -28,4 +28,5 @@
     - include: tasks/mysql.yml
     - include: tasks/django.yml
     - include: tasks/gui.yml
+    - include: tasks/chrome.yml
 
