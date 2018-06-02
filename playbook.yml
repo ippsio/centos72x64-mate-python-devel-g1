@@ -7,6 +7,10 @@
     python_ver: 3.6.5
 
   tasks:
+    - name: Disable SELinux
+      become: yes
+      selinux: state=disabled
+
     - include: tasks/yum_update.yml
     - include: tasks/python.yml
     - include: tasks/nginx.yml

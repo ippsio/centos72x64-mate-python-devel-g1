@@ -18,9 +18,9 @@ Vagrant.configure("2") do |config|
   #  config.cache.scope = :box
   #end
 
-  config.vm.box = "centos7.2x64"
+  config.vm.box = "centos/7"
   config.vm.provider "virtualbox" do |vbox|
-    vbox.name = "python-devel-g1-vm3"
+    vbox.name = "python-devel-g1-vm1"
     vbox.customize ["modifyvm", :id, "--memory", "2048"]
     vbox.customize ["modifyvm", :id, "--nictype1" ,"virtio"]
     vbox.customize ["modifyvm", :id, "--nictype2" ,"virtio"]
