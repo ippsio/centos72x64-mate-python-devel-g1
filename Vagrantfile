@@ -14,14 +14,18 @@ Vagrant.configure("2") do |config|
   # boxes at https://vagrantcloud.com/search.
 
   # vagrant-cachier plugin
-  #if Vagrant.has_plugin?("vagrant-cachier")
-  #  config.cache.scope = :box
-  #end
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.scope = :box
+  end
 
   config.vm.box = "centos/7"
   config.vm.provider "virtualbox" do |vbox|
+    vbox.cpus = 2
+    vbox.memory = 2048
     vbox.name = "python-devel-g1-vm1"
+
     vbox.customize ["modifyvm", :id, "--memory", "2048"]
+    vbox.customize ["modifyvm", :id, "--vram", "128"]
     vbox.customize ["modifyvm", :id, "--nictype1" ,"virtio"]
     vbox.customize ["modifyvm", :id, "--nictype2" ,"virtio"]
   end
@@ -81,6 +85,7 @@ Vagrant.configure("2") do |config|
     a.playbook = "playbook.yml"
     a.verbose = true
     a.install = true
+    #a.retry_files_enabled = false
   end
 
 end

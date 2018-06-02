@@ -25,22 +25,23 @@
 - name: Download pyenv
   git:
     repo=https://github.com/pyenv/pyenv.git
-    dest=~/.pyenv
+    dest="{{ userhome }}/.pyenv"
     accept_hostkey=yes
 
 - name: Edit bash_profile
   blockinfile:
-    dest: ~/.bash_profile
+    dest: "{{ userhome }}/.bash_profile"
+    marker: "# <!-- {mark} ANSIBLE MANAGED BLOCK FOR PYENV -->"
+    create: yes
     block: |
-      export PYENV_ROOT="$HOME/.pyenv"
-      export PYENV_ROOT="$HOME/.pyenv"
+      export PYENV_ROOT="{{ userhome }}/.pyenv"
       export PATH="$PYENV_ROOT/bin:$PATH"
       if command -v pyenv 1>/dev/null 2>&1; then
         eval "$(pyenv init -)"
       fi
 
 - name: Reload bash_profile
-  shell: source ~/.bash_profile
+  shell: "source {{ userhome }}/.bash_profile"
 
 - name: Exec pyenv versions
   shell: bash -lc "pyenv versions | grep {{ python_ver }}"
@@ -66,15 +67,15 @@
 
 - name: Set interpreter
   set_fact: 
-    ansible_python_interpreter=/home/vagrant/.pyenv/versions/{{ python_ver }}/bin/python
+    ansible_python_interpreter="{{ userhome }}/.pyenv/versions/{{ python_ver }}/bin/python"
 
 - name: Upgrade pip
-  shell: "~/.pyenv/versions/3.6.5/bin/pip install --upgrade pip"
+  shell: "{{ userhome }}/.pyenv/versions/{{ python_ver }}/bin/pip install --upgrade pip"
   register: result
   #changed_when: '”already up-to-date” not in result.stdout'
 
 - name: Upgrade setuptools
-  shell: "~/.pyenv/versions/3.6.5/bin/pip install --upgrade setuptools"
+  shell: "{{ userhome }}/.pyenv/versions/{{ python_ver }}/bin/pip install --upgrade setuptools"
   register: result
   #changed_when: '”already up-to-date” not in result.stdout'
 

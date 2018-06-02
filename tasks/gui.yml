@@ -5,7 +5,7 @@
 
 - name: Install GUI
   become: yes
-  yum: name="epel-release.noarch" state=latest
+  yum: name="epel-release.noarch" state=present
 
 - name: Update /etc/yum.conf
   become: yes
@@ -14,12 +14,6 @@
 - name: Install X Window system
   become: yes
   yum: name="@X Window system" enablerepo=epel state=present
-
-#- name: Install GNOME Desktop
-#  become: yes
-#  yum:
-#    name: "@^gnome-desktop-environment" 
-#    state: present
 
 - name: Install MATE-Desktop
   become: yes
@@ -31,7 +25,9 @@
 
 - name: Append .xinitrc
   blockinfile:
-    dest: /$HOME/.xinitrc
+    #dest: /$HOME/.xinitrc
+    dest: "{{ userhome }}/.xinitrc"
+    marker: "#<!-- {mark} ANSIBLE MANAGED BLOCK FOR MATE-SESSION -->"
     create: yes
     block: |
       exec mate-session
@@ -39,10 +35,6 @@
 - name: Set default
   become: yes
   shell: systemctl set-default graphical.target
-
-#- name: Install qt5-qtbase.x86_64 for prepare install for fcitx
-#  become: yes
-#  yum: name=qt5-qtbase.x86_64 enablerepo="epel" state=present
 
 - name: Install fcitx(instead of iBus for Pycharm warning.)
   become: yes
@@ -54,42 +46,17 @@
   - fcitx-gtk3.x86_64
   - fcitx-libs.x86_64
   - fcitx-pinyin.x86_64
-#  - fcitx-qt4.x86_64
-#  - fcitx-qt5-devel.x86_64
-#  - fcitx-qt5.x86_64
   - fcitx-qw.x86_64
   - fcitx-table.x86_64
   - fcitx-anthy.x86_64
   - fcitx.x86_64
   - fcitx-configtool.x86_64
 
-#- name: Install fcitx config tool(instead of iBus for Pycharm warning.)
-#  become: yes
-#  yum: name={{ item }} state=present
-#  with_items: 
-#  - ftp://ftp.pbone.net/mirror/archive.fedoraproject.org/fedora/linux/updates/19/x86_64/fcitx-configtool-0.4.7-1.fc19.x86_64.rpm 
-
-- name: Kill iBus processes.
-  become: yes
-  shell: killall ibus-daemon
-  ignore_errors: yes
-
-- name: Remove iBus
-  become: yes
-  yum: name=ibus state=absent
-
-- name: Gsetting set
-  shell: gsettings set org.gnome.settings-daemon.plugins.keyboard active false
-  ignore_errors: yes
-
-- name: imsettings-switch fcitx
-  shell: imsettings-switch fcitx
-  ignore_errors: yes
-
 - name: blockinfile
   blockinfile:
-    dest: /$HOME/.bash_profile
+    dest: "{{ userhome }}/.bash_profile"
     create: yes
+    marker: "#<!-- {mark} ANSIBLE MANAGED BLOCK FOR FCITX SETTINGS -->"
     block: |
       export GTK_IM_MODULE=fcitx
       export QT_IM_MODULE=fcitx
@@ -99,4 +66,47 @@
 - name: Japanize
   become: yes
   shell: localectl set-locale LANG=ja_JP.UTF-8
+
+- name: Create terminal color profile(dconf).
+  become: yes
+  blockinfile:
+    dest: "/tmp/mate-terminal-dconf.txt"
+    create: yes
+    marker: "#<!-- {mark} ANSIBLE MANAGED BLOCK FOR MATE-TERMINAL SETTINGS -->"
+    block: |
+      [profiles/default]
+      foreground-color='#E6E6E6E6E6E6'
+      visible-name='Default'
+      palette='#EEEEEEEEECEC'
+      title='Terminal'
+      background-darkness=0.82999999999999996
+      use-system-font=false
+      use-theme-colors=false
+      background-type='solid'
+      font='VL Gothic Bold 10'
+      allow-bold=true
+      bold-color='#FFFFFFFFFFFF'
+      background-color='#404000000000'
+      title-mode='ignore'
+
+- name: set terminal color profile.
+  shell: "dbus-launch dconf load /org/mate/terminal/ < /tmp/mate-terminal-dconf.txt"
+
+- name: Put Pycharm web site on Desktop
+  blockinfile:
+    create: yes
+    path: "{{ userhome }}/Desktop/GetPycharm.desktop"
+    block: |
+      [Desktop Entry]
+      Encoding=UTF-8
+      Name=GetPyCharm
+      Type=Link
+      URL=https://www.jetbrains.com/pycharm/
+      Icon=/usr/share/icons/hicolor/16x16/apps/firefox.png
+
+
+#- name: Change folder names in English expression.
+#  shell: 'echo "LANG=C xdg-user-dirs-gtk-update" > ~/デスクトップ/Change-folder-names-English.sh'
+#  ignore_errors: yes
+
 

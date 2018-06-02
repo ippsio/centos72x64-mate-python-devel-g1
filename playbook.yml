@@ -4,7 +4,18 @@
   gather_facts: False
 
   vars:
-    python_ver: 3.6.5
+    userhome: '/home/vagrant'
+    python_ver: '3.6.5'
+    http_path: 'app'
+    mysql_db: 'app'
+    mysql_user: 'app-user'
+    mysql_pass: 'app-pass'
+    mysql_host: 'localhost'
+    django_prj_root_path: '/var/www/django'
+    django_prj_name: 'project'
+    django_app_name: 'app'
+    django_app_port: '8000'
+    nginx_port: '80'
 
   tasks:
     - name: Disable SELinux

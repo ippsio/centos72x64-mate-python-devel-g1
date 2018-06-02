@@ -17,13 +17,13 @@
   yum:
     update_cache: yes
     name: '*'
-    state: latest
+    state: present
 
 - name: yum update
   become: yes
   yum:
     name: '*'
-    state: latest
+    state: present
 
 - name: Add epel-release repository.
   become: yes
@@ -51,4 +51,9 @@
   with_items:
     - vim
     - tcpflow
+
+- name: Set timezone to Asia/Tokyo
+  become: yes
+  shell: "timedatectl set-timezone Asia/Tokyo"
+
 

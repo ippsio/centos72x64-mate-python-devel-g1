@@ -1,13 +1,18 @@
 ---
-- name: fact
-  set_fact:
-    python_ver: '3.6.5'
-    http_path: 'app'
-    mysql_db: 'app'
-    mysql_user: 'app-user'
-    mysql_pass: 'app-pass'
-    mysql_host: 'localhost'
-
+#- name: fact
+#  set_fact:
+#    python_ver: '3.6.5'
+#    http_path: 'app'
+#    mysql_db: 'app'
+#    mysql_user: 'app-user'
+#    mysql_pass: 'app-pass'
+#    mysql_host: 'localhost'
+#    django_prj_root_path: '/var/www/django'
+#    django_prj_name: 'project'
+#    django_app_name: 'app'
+#    django_app_port: '8000'
+#    nginx_port: '80'
+ 
 - name: Make django project root directory
   become: yes
   file:
@@ -19,12 +24,14 @@
 
 - name: Set interpreter
   set_fact:
-    ansible_python_interpreter=/home/vagrant/.pyenv/versions/{{ python_ver }}/bin/python
+    #ansible_python_interpreter=$HOME/.pyenv/versions/{{ python_ver }}/bin/python
+    ansible_python_interpreter="{{ userhome }}/.pyenv/versions/{{ python_ver }}/bin/python"
 
 - name: Create requirements.txt
   blockinfile:
-    dest: /var/www/django/project/requirements_django.txt
+    dest: "{{ django_prj_root_path }}/{{ django_prj_name }}/requirements_django.txt"
     create: yes
+    marker: "#<!-- {mark} ANSIBLE MANAGED BLOCK FOR DJANGO REQUIREMENTS-->"
     block: |
       Django
       djangorestframework
@@ -33,20 +40,18 @@
       PyMySQL
       pytz
 
-- name: wHICH?
-  shell: bash -lc "which pip"
-
 - name: Install Django related modules.
-  shell: bash -lc "pip install --default-timeout=32768 -r /var/www/django/project/requirements_django.txt"
+  shell: bash -lc "pip install --default-timeout=32768 -r {{ django_prj_root_path }}/{{ django_prj_name }}/requirements_django.txt"
 
 #- name: Set interpreter
 #  set_fact:
 #    ansible_python_interpreter=/usr/bin/python
 
-- name: Create new app.conf to /tmp
+- name: Create new app.conf
   become: yes
   blockinfile:
     dest: /tmp/{{ http_path }}.conf
+    marker: "#<!-- {mark} ANSIBLE MANAGED BLOCK FOR APP.CONF -->"
     create: yes
     block: |
       server {
@@ -65,11 +70,15 @@
           }
       
           location /{{ http_path }}/ {
-              proxy_pass http://localhost:8000/{{ http_path }}/;
+              proxy_pass http://localhost:{{ django_app_port }}/{{ http_path }}/;
           }
       
-          location / {
-              proxy_pass http://localhost:8000/;
+          location /admin/ {
+              proxy_pass http://localhost:{{ django_app_port }}/admin/;
+          }
+
+          location /static/ {
+              proxy_pass http://localhost:{{ django_app_port }}/static/;
           }
       }
 
